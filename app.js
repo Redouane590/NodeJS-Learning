@@ -4,7 +4,7 @@ const cors = require("cors");
 const bookRoutes = require("./routes/book");
 const userRoutes = require("./routes/user");
 const connectDB = require("./config/db");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
 connectDB()
 

@@ -28,13 +28,14 @@ exports.createBook = (req, res) => {
   delete book._id;
   delete book.userId;
   console.log(book);
-  console.log(req.auth);
-  console.log(`${req.protocol}://${req.get('host')}/images/${req.file.filename}`);
+  console.log(req);
+  console.log('AAAAAAAAAAAAAAAAAA', req.compressedImagePath);
+  console.log(`${req.protocol}://${req.get('host')}/${req.compressedImagePath}`);
   try {
     const newBook = new Book({
       ...book,
       userId: req.auth.userId,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+      imageUrl: `${req.protocol}://${req.get('host')}/${req.compressedImagePath}`,
     });
     newBook.save();
     res.send(newBook);
@@ -91,16 +92,15 @@ exports.createRating = (req, res, next) => {
 
       if (book.ratings.find((ratings) => ratings.userId === req.auth.userId)) {
         return res.status(400).json({ error: "Vous avez déjà noté ce livre." });
-      } else {
-        book.ratings.push(newRating);
-        let sumRating = 0;
-        book.ratings.forEach((rating) => {
-          sumRating += rating.grade;
-        });
-        book.averageRating = sumRating / book.ratings.length;
-        book.save();
-        return res.status(201).json(book);
-      }
+      } 
+      book.ratings.push(newRating);
+      let sumRating = 0;
+      book.ratings.forEach((rating) => {
+        sumRating += rating.grade;
+      });
+      book.averageRating = sumRating / book.ratings.length;
+      book.save();
+      return res.status(201).json(book);
     })
     .catch((error) => res.status(500).json({ error }));
 };
