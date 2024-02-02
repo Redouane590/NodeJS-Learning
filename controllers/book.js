@@ -45,13 +45,16 @@ exports.createBook = (req, res) => {
 };
 
 exports.updateBook = (req, res, next) => {
+  console.log('updaptebook', req.file);
   const bookObj = req.file ? {
+    
     ...JSON.parse(req.body.book),
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    imageUrl: `${req.protocol}://${req.get('host')}/${req.compressedImagePath}`
   } : { ...req.body };
   delete bookObj.userId;
   Book.findOne({ _id: req.params.id })
     .then((book) => {
+      console.log(book);
       if (book.userId !== req.auth.userId) {
         return res.status(401).json({ error: "Unauthorized" });
       } else {
